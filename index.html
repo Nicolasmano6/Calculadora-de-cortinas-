@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculadora de Cortinas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+    .app {
+      max-width: 420px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    h2 {
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+    }
+    button {
+      width: 100%;
+      margin-top: 15px;
+      padding: 10px;
+      font-size: 16px;
+      background: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    .resultado {
+      margin-top: 15px;
+      background: #eee;
+      padding: 10px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <h2>Calculadora de Cortinas</h2>
+
+    <label>Largura da Janela (m)</label>
+    <input type="number" id="largura" step="0.01">
+
+    <label>Altura da Janela (m)</label>
+    <input type="number" step="0.01">
+
+    <label>Forro</label>
+    <select id="forro">
+      <option value="0">Sem forro</option>
+      <option value="16">Microfibra</option>
+      <option value="25">Blackout 70%</option>
+      <option value="30">Blackout 100%</option>
+    </select>
+
+    <label>Sistema</label>
+    <select id="trilho">
+      <option value="comum">Trilho comum (duplo)</option>
+      <option value="tubo1">Tubo trilho simples</option>
+      <option value="tubo2">Tubo trilho duplo</option>
+    </select>
+
+    <label>Margem para desconto (%)</label>
+    <input type="number" id="margem" value="15">
+
+    <button onclick="calcular()">Calcular</button>
+
+    <div class="resultado" id="resultado"></div>
+  </div>
+
+<script>
+function calcular() {
+  let L = parseFloat(document.getElementById("largura").value);
+  let precoForro = parseFloat(document.getElementById("forro").value);
+  let tipoTrilho = document.getElementById("trilho").value;
+  let margem = parseFloat(document.getElementById("margem").value) / 100;
+
+  if (!L || L <= 0) {
+    alert("Informe a largura corretamente");
+    return;
+  }
+
+  // Tecidos
+  let linho = L * 3 * 20;
+  let forro = L * 2 * precoForro;
+
+  // Confecção
+  let confeccao = L * 65;
+
+  // Trilhos
+  let L_arred = Math.ceil(L);
+  let trilho = 0;
+
+  if (tipoTrilho === "comum") {
+    trilho = L_arred * 15;
+  } else {
+    let qtdTubos = tipoTrilho === "tubo1" ? 1 : 2;
+    let tubos = L_arred * 15 * qtdTubos;
+    let suportes = Math.ceil(L / 0.6) * 10;
+    trilho = tubos + suportes;
+  }
+
+  // Acessórios
+  let acessorios = (L / 2) * 25;
+
+  // Instalação
+  let instalacao = 75;
+
+  let custoTotal = linho + forro + confeccao + trilho + acessorios + instalacao;
+  let custoComMargem = custoTotal * (1 + margem);
+  let precoVenda = custoComMargem * 2;
+
+  document.getElementById("resultado").innerHTML = `
+    <strong>Custo real:</strong> R$ ${custoTotal.toFixed(2)}<br>
+    <strong>Custo com margem:</strong> R$ ${custoComMargem.toFixed(2)}<br>
+    <strong>Preço de venda:</strong> <span style="font-size:18px;">R$ ${precoVenda.toFixed(2)}</span>
+  `;
+}
+</script>
+
+</body>
+</html>
